@@ -131,10 +131,17 @@ class CicloService {
   // ============================================================
 
   int totalQuestoes() {
-    return disciplinas.fold(
-      0,
-      (total, disciplina) =>
-          total + disciplina.questoesResolvidas,
-    );
-  }
+  return disciplinas.fold(
+    0,
+    (totalDisciplinas, disciplina) {
+      final totalAulas = disciplina.aulas.fold(
+        0,
+        (totalAulas, aula) =>
+            totalAulas + aula.questoesResolvidas,
+      );
+
+      return totalDisciplinas + totalAulas;
+    },
+  );
+}
 }

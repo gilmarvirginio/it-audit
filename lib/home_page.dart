@@ -3,7 +3,10 @@ import 'data/disciplinas.dart';
 import 'services/ciclo_service.dart';
 import 'pages/estudo_page.dart';
 import 'pages/config_page.dart';
-
+import 'pages/progresso_page.dart';
+import 'services/storage_service.dart';
+import 'pages/organograma_page.dart';
+import 'pages/revisao_page.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -129,23 +132,29 @@ class _HomePageState extends State<HomePage> {
             "${ciclo.concluidas()}/${listaDisciplinas.length} disciplinas",
             cor: Colors.orange,
           ),
-          card(
+                    card(
             context,
             icon: Icons.timer,
             titulo: "Tempo Estudado",
             subtitulo:
-            "${(ciclo.tempoTotalSegundos() ~/ 3600).toString().padLeft(2, '0')}h "
-            "${((ciclo.tempoTotalSegundos() % 3600) ~/ 60).toString().padLeft(2, '0')}min",
+                "${StorageService.tempoTotalHistorico() ~/ 3600}h "
+                "${((StorageService.tempoTotalHistorico() % 3600) ~/ 60).toString().padLeft(2, '0')}min",
             cor: Colors.green,
           ),
-          card(
+                    card(
             context,
-            icon: Icons.history,
-            titulo: "Revisões",
-            subtitulo: ciclo.revisoesPendentes() == 0
-            ? "Nenhuma revisão pendente"
-            : "${ciclo.revisoesPendentes()} revisão(ões) pendente(s)",
+            icon: Icons.account_tree,
+            titulo: "Organograma",
+            subtitulo: "Visualizar estrutura do ciclo",
             cor: Colors.purple,
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (_) => const OrganogramaPage(),
+                ),
+              );
+            },
           ),
 
           card(
@@ -220,27 +229,72 @@ class _HomePageState extends State<HomePage> {
         ],
       ),
 
-bottomNavigationBar: NavigationBar(
-  selectedIndex: _indiceSelecionado,
+    bottomNavigationBar: NavigationBar(
+      selectedIndex: _indiceSelecionado,
+
+      labelTextStyle: WidgetStateProperty.all(
+        const TextStyle(
+          fontSize: 12,
+    ),
+  ),
 
   onDestinationSelected: (index) {
-    setState(() {
-      _indiceSelecionado = index;
-    });
-
-    if (index == 4) {
-  Navigator.push(
-    context,
-    MaterialPageRoute(
-      builder: (_) => const ConfigPage(),
-    ),
-  ).then((_) {
-    if (mounted) {
-      setState(() {});
-    }
+  setState(() {
+    _indiceSelecionado = index;
   });
-}
-  },
+        if (index == 1) {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (_) => const RevisaoPage(),
+          ),
+        ).then((_) {
+          if (mounted) {
+            setState(() {});
+          }
+        });
+      }
+  
+      if (index == 2) {
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (_) => const OrganogramaPage(),
+        ),
+      ).then((_) {
+        if (mounted) {
+          setState(() {});
+        }
+      });
+    }
+
+  if (index == 3) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (_) => const ProgressoPage(),
+      ),
+    ).then((_) {
+      if (mounted) {
+        setState(() {});
+      }
+    });
+  }
+
+  if (index == 4) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (_) => const ConfigPage(),
+      ),
+    ).then((_) {
+      if (mounted) {
+        setState(() {});
+      }
+    });
+  }
+},  
+
 
   destinations: const [
     NavigationDestination(
@@ -248,14 +302,14 @@ bottomNavigationBar: NavigationBar(
       label: "Início",
     ),
 
-    NavigationDestination(
-      icon: Icon(Icons.school),
-      label: "Estudos",
-    ),
+          NavigationDestination(
+        icon: Icon(Icons.style),
+        label: "Revisão",
+      ),
 
-    NavigationDestination(
-      icon: Icon(Icons.history),  
-      label: "Revisões",
+        NavigationDestination(
+      icon: Icon(Icons.account_tree),
+      label: "Organograma",
     ),
 
     NavigationDestination(
